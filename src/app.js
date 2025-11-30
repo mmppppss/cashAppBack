@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const { connectDB } = require('../config/database');
 const authRoutes = require('./auth/auth.route'); 
 const userRoutes = require('./users/user.route');
+const cuentaRoutes = require('./cuenta/cuenta.route');
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ connectDB();
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/cuentas', cuentaRoutes);
 
 
 app.get('/', (req, res) => {

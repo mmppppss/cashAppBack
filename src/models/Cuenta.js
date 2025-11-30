@@ -16,7 +16,7 @@ const Cuenta = sequelize.define('Cuenta', {
         allowNull: false,
         field: 'id_usuario',
         references: {
-            model: User, 
+            model: Usuario, 
             key: 'id' 
         }
     },
@@ -34,13 +34,13 @@ const Cuenta = sequelize.define('Cuenta', {
 
 
 // Una Cuenta pertenece a un Usuario (Muchos-a-Uno)
-Account.belongsTo(User, {
+Cuenta.belongsTo(Usuario, {
     foreignKey: 'id_usuario',
     as: 'usuario'
 });
 
 // Un Usuario puede tener muchas Cuentas (Uno-a-Muchos)
-User.hasMany(Account, {
+Usuario.hasMany(Cuenta, {
     foreignKey: 'id_usuario',
     as: 'cuentas'
 });

@@ -24,7 +24,8 @@ const validateUser = async (email, password) => {
 const generateToken = (user) => {
 	const payload = {
 		id: user.id,
-		email: user.email
+		email: user.email,
+		phone: user.phone
 	};
 
 	return jwt.sign(payload, JWT_SECRET, {

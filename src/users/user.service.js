@@ -1,4 +1,5 @@
 const Usuario= require('../models/Usuario');
+const cuentaService = require('../cuenta/cuenta.service');
 const bcrypt = require('bcryptjs');
 
 const hashPassword = async (password) => {
@@ -15,12 +16,26 @@ const createUser = async (email, password, pin, phone) => {
 		pin: pin,
 		phone: phone,
 	});
+	const newCuenta = await cuentaService.createCuenta(newUser);
 
 	return {
 		id: newUser.id,
 		email: newUser.email,
-		phone: newUser.phone
+		phone: newUser.phone,
+		cuenta: newCuenta
 	};
 };
 
-module.exports = { createUser };
+const getCuenta = async (id) => {
+	const cuenta = await cuentaService.getCuentaByUserId(id);
+	return cuenta;
+}
+
+const getData = async (usuario) =>{
+	const  cuenta = await getCuenta(usuario.id)
+	return	{
+		usuario,
+		cuenta
+	};
+}
+module.exports = { createUser, getCuenta, getData};
