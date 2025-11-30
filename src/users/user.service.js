@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const Usuario= require('../models/Usuario');
 const bcrypt = require('bcryptjs');
 
 const hashPassword = async (password) => {
@@ -6,19 +6,20 @@ const hashPassword = async (password) => {
 	return bcrypt.hash(password, salt);
 };
 
-const createUser = async (username, email, password) => {
+const createUser = async (email, password, pin, phone) => {
 	const hashedPassword = await hashPassword(password);
 
-	const newUser = await User.create({
-		username: username,
+	const newUser = await Usuario.create({
 		email: email,
-		hashed_password: hashedPassword
+		password: hashedPassword,
+		pin: pin,
+		phone: phone,
 	});
 
 	return {
 		id: newUser.id,
-		username: newUser.username,
-		email: newUser.email
+		email: newUser.email,
+		phone: newUser.phone
 	};
 };
 

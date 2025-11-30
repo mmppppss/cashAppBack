@@ -1,13 +1,13 @@
 const authService = require('./auth.service');
 
 const login = async (req, res) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
 
-	if (!username || !password) {
-		return res.status(400).json({ message: 'Se requieren usuario y contraseña.' });
+	if (!email || !password) {
+		return res.status(400).json({ message: 'Se requieren email y contraseña.' });
 	}
 
-	const user = await authService.validateUser(username, password);
+	const user = await authService.validateUser(email, password);
 
 	if (!user) {
 		return res.status(401).json({ message: 'Credenciales inválidas.' });
@@ -18,7 +18,7 @@ const login = async (req, res) => {
 	return res.status(200).json({
 		message: 'Login exitoso',
 		token,
-		user: { id: user.id, username: user.username }
+		user: { id: user.id, email: user.email },
 	});
 };
 
