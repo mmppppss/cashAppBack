@@ -1,14 +1,14 @@
 const userService = require('./user.service');
 
 const register = async (req, res) => {
-	const { email, password, pin, phone } = req.body;
+	const { email, password, pin, phone, name } = req.body;
 
-	if (!pin || !password || !email || !phone) {
+	if (!pin || !password || !email || !phone || !name) {
 		return res.status(400).json({ message: 'Todos los campos (pin, email, password, phone) son obligatorios.' });
 	}
 
 	try {
-		const newUser = await userService.createUser(email, password, pin, phone);
+		const newUser = await userService.createUser(email, password, pin, phone, name);
 
 		return res.status(201).json({
 			message: 'Usuario registrado exitosamente',
@@ -27,12 +27,13 @@ const register = async (req, res) => {
 };
 
 const getMe = async (req, res) => {
-	const { id, email, phone } = req.user;
+	const { id, email, phone, name } = req.user;
 	const cuenta = await userService.getCuenta(id);
 	return res.status(200).json({
 		id,
 		email,
 		phone,
+		name,
 		cuenta
 	});
 };

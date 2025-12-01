@@ -11,8 +11,14 @@ const Usuario = sequelize.define('Usuario', {
 
 	pin: {
 		type: DataTypes.INTEGER,
-		allowNull: true,
+		allowNull: false,
 		field: 'pin'
+	},
+
+	name:{
+		type: DataTypes.STRING,
+		allowNull: false,
+		field: 'nombre'
 	},
 
 	phone: {
