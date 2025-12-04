@@ -25,7 +25,8 @@ const generateToken = (user) => {
 	const payload = {
 		id: user.id,
 		email: user.email,
-		phone: user.phone
+		phone: user.phone,
+		name: user.name
 	};
 
 	return jwt.sign(payload, JWT_SECRET, {

@@ -7,7 +7,7 @@ const hashPassword = async (password) => {
 	return bcrypt.hash(password, salt);
 };
 
-const createUser = async (email, password, pin, phone) => {
+const createUser = async (email, password, pin, phone, name) => {
 	const hashedPassword = await hashPassword(password);
 
 	const newUser = await Usuario.create({
@@ -15,6 +15,7 @@ const createUser = async (email, password, pin, phone) => {
 		password: hashedPassword,
 		pin: pin,
 		phone: phone,
+		name: name
 	});
 	const newCuenta = await cuentaService.createCuenta(newUser);
 
@@ -22,6 +23,7 @@ const createUser = async (email, password, pin, phone) => {
 		id: newUser.id,
 		email: newUser.email,
 		phone: newUser.phone,
+		name: newUser.name,
 		cuenta: newCuenta
 	};
 };
@@ -33,9 +35,12 @@ const getCuenta = async (id) => {
 
 const getData = async (usuario) =>{
 	const  cuenta = await getCuenta(usuario.id)
-	return	{
-		usuario,
-		cuenta
-	};
+	const data = {
+		telefono: usuario.phone,
+		email: usuario.email,
+		nombre: usuario.name,
+		cuenta: cuenta.id
+	}
+	return data
 }
 module.exports = { createUser, getCuenta, getData};

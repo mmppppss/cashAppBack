@@ -4,6 +4,7 @@ const { connectDB } = require('../config/database');
 const authRoutes = require('./auth/auth.route'); 
 const userRoutes = require('./users/user.route');
 const cuentaRoutes = require('./cuenta/cuenta.route');
+const transferenciaRoutes = require('./transferencia/transferencia.router')
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cuentas', cuentaRoutes);
+app.use('/api/transferencias', transferenciaRoutes)
 
 
 app.get('/', (req, res) => {
