@@ -33,16 +33,4 @@ const Cuenta = sequelize.define('Cuenta', {
 });
 
 
-// Una Cuenta pertenece a un Usuario (Muchos-a-Uno)
-Cuenta.belongsTo(Usuario, {
-    foreignKey: 'id_usuario',
-    as: 'usuario'
-});
-
-// Un Usuario puede tener muchas Cuentas (Uno-a-Muchos)
-Usuario.hasMany(Cuenta, {
-    foreignKey: 'id_usuario',
-    as: 'cuentas'
-});
-
 module.exports = Cuenta;

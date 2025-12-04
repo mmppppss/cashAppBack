@@ -4,7 +4,7 @@ const register = async (req, res) => {
 	const { email, password, pin, phone, name } = req.body;
 
 	if (!pin || !password || !email || !phone || !name) {
-		return res.status(400).json({ message: 'Todos los campos (pin, email, password, phone) son obligatorios.' });
+		return res.status(400).json({ message: 'Todos los campos (pin, email, password, phone, name) son obligatorios.' });
 	}
 
 	try {
@@ -33,8 +33,8 @@ const getMe = async (req, res) => {
 		id,
 		email,
 		phone,
-		name,
-		cuenta
+		cuenta,
+		name
 	});
 };
 const getData = async(req,res) => {

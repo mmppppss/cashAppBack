@@ -23,9 +23,8 @@ const createUser = async (email, password, pin, phone, name) => {
 		id: newUser.id,
 		email: newUser.email,
 		phone: newUser.phone,
-		nombre: newUser.name,
-		cuenta: newCuenta,
-
+		name: newUser.name,
+		cuenta: newCuenta
 	};
 };
 
@@ -36,9 +35,12 @@ const getCuenta = async (id) => {
 
 const getData = async (usuario) =>{
 	const  cuenta = await getCuenta(usuario.id)
-	return	{
-		usuario,
-		cuenta
-	};
+	const data = {
+		telefono: usuario.phone,
+		email: usuario.email,
+		nombre: usuario.name,
+		cuenta: cuenta.id
+	}
+	return data
 }
 module.exports = { createUser, getCuenta, getData};
