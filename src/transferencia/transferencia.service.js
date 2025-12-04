@@ -1,6 +1,9 @@
 const { sequelize } = require('../../config/database');
+const { Op } = require('sequelize');
 const Cuenta = require('../models/Cuenta');
+const Usuario = require('../models/Usuario')
 const Transferencia = require('../models/Transferencia');
+const cuentaService = require('../cuenta/cuenta.service')
 
 /**
  * Realiza una transferencia de dinero de una cuenta a otra.
@@ -63,4 +66,76 @@ const createTransferencia = async (id_origen, id_destino, monto) => {
     }
 };
 
-module.exports = { createTransferencia };
+const getHistorialTransferencias = async (id_usuario) => {
+    // Lógica para obtener el ID de la Cuenta
+    const cuentaUsuario = await cuentaService.getCuentaByUserId(id_usuario); 
+    if (!cuentaUsuario) {
+        throw new Error("Cuenta no encontrada para este usuario."); 
+    }
+    const id_cuenta_usuario = cuentaUsuario.id;
+
+    // Ejecutar la consulta compleja con inclusión anidada
+    const historial = await Transferencia.findAll({
+        where: {
+            [Op.or]: [
+                { id_cuenta_origen: id_cuenta_usuario },
+                { id_cuenta_destino: id_cuenta_usuario }
+            ]
+        },
+        include: [
+            // Incluir Cuenta Origen y anidar la información del Usuario Origen
+            {
+                model: Cuenta,
+                as: 'origen',
+                attributes: ['id', 'id_usuario'],
+                include: [{
+                    model: Usuario,
+                    as: 'usuario', // Alias de la relación Cuenta.belongsTo(Usuario)
+                    attributes: ['id', 'email', 'name'] // Campos del usuario que quieres ver
+                }]
+            },
+            // Incluir Cuenta Destino y anidar la información del Usuario Destino
+            {
+                model: Cuenta,
+                as: 'destino',
+                attributes: ['id', 'id_usuario'],
+                include: [{
+                    model: Usuario,
+                    as: 'usuario',
+                    attributes: ['id', 'email', 'name']
+                }]
+            }
+        ],
+        order: [
+            ['fecha', 'DESC']
+        ],
+    });
+
+    // 3. Mapear y formatear el historial para el cliente
+    const historialFormateado = historial.map(transferencia => {
+        const esEnviada = transferencia.id_cuenta_origen === id_cuenta_usuario;
+        
+        // Determinar qué objeto (Origen o Destino) NO es el usuario logueado
+        const cuentaOpuesta = esEnviada ? transferencia.destino : transferencia.origen;
+        
+        // Extraer el usuario opuesto del objeto de la cuenta opuesta
+        const usuarioOpuesto = cuentaOpuesta.usuario;
+        
+        return {
+            id: transferencia.id,
+            tipo: esEnviada ? 'ENVIADA' : 'RECIBIDA',
+            monto: transferencia.monto,
+            fecha: transferencia.fecha,
+            // Retornar la información clave del usuario opuesto
+            usuario_opuesto: {
+                id: usuarioOpuesto.id,
+                email: usuarioOpuesto.email,
+                nombre: usuarioOpuesto.name,
+                cuenta_id: cuentaOpuesta.id // El ID de la cuenta del otro usuario
+            }
+        };
+    });
+    
+    return historialFormateado;
+};
+module.exports = { createTransferencia, getHistorialTransferencias };

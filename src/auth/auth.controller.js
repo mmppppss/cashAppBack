@@ -6,19 +6,23 @@ const login = async (req, res) => {
 	if (!email && (!password || !pin)) {
 		return res.status(400).json({ message: 'Se requieren email y contraseña o pin.' });
 	}
-
-	const user = await authService.validateUser(email, password);
+	let user;
+	if(pin){
+		user = await authService.validateUserPin(email, pin);
+	}
+	if(password){
+		user = await authService.validateUser(email, password);
+	}
 
 	if (!user) {
 		return res.status(401).json({ message: 'Credenciales inválidas.' });
 	}
 
 	const token = authService.generateToken(user);
-
 	return res.status(200).json({
 		message: 'Login exitoso',
 		token,
-		user: { id: user.id, email: user.email, name: user.name },
+		user: { id: user.id, email: user.email, name: user.name, cuenta: user.cuenta[0] },
 	});
 };
 

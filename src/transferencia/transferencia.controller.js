@@ -47,5 +47,33 @@ const createTransferencia = async (req, res) => {
         return res.status(400).json({ message: error.message });
     }
 };
+/**
+ * Obtiene el historial de transferencias (enviadas y recibidas) del usuario logueado.
+ * Ruta: GET /api/transferencias/historial
+ */
+const historialTransferencias = async (req, res) => {
+    try {
+        // 1. Obtener el ID del usuario logueado, que viene del middleware 'protect'
+        const id_usuario = req.user.id; 
+        
+        // 2. Delegar la lógica compleja al servicio
+        const historial = await transferenciaService.getHistorialTransferencias(id_usuario);
+        
+        // 3. Respuesta exitosa
+        return res.status(200).json(historial);
 
-module.exports = { createTransferencia };
+    } catch (error) {
+        // 4. Manejo de errores
+        console.error('Error en el controlador al obtener historial:', error);
+        
+        // Si es un error de negocio esperado (ej: cuenta no encontrada)
+        if (error.message.includes("Cuenta no encontrada")) {
+            return res.status(404).json({ message: error.message });
+        }
+        
+        // Error genérico del servidor
+        return res.status(500).json({ message: 'Error interno del servidor al obtener el historial.' });
+    }
+};
+
+module.exports = { createTransferencia, historialTransferencias };
